@@ -1,0 +1,71 @@
+version: '2'
+services:
+  eurekaserver:
+     image:   cham/exe-eurekasvr:webshop
+     ports:
+         - "8761:8761"
+  configserver:
+      image: cham/exe-confsvr:webshop
+      ports:
+         - "8888:8888"
+      environment:
+         EUREKASERVER_URI: "http://eurekaserver:8761/eureka/"
+         EUREKASERVER_PORT: "8761"
+  database:
+      image: postgres
+      ports:
+        - "5432:5432"
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=p0stgr@s
+        - POSTGRES_DB=eagle_eye_local
+  zuulserver:
+          image: cham/exe-zuulsvr:webshop
+          ports:
+            - "5555:5555"
+          environment:
+            PROFILE: "default"
+            SERVER_PORT: "5555"
+            CONFIGSERVER_URI: "http://configserver:8888"
+            EUREKASERVER_URI: "http://eurekaserver:8761/eureka/"
+            EUREKASERVER_PORT:        "8761"
+            DATABASESERVER_PORT:      "5432"
+            CONFIGSERVER_PORT:        "8888"
+            ORGSERVERNEW_PORT:        "8087"
+  orderservice:
+      image: cham/exe-order-service:webshop
+      ports:
+        - "8080:8080"
+        - "8090:8090"
+      environment:
+        PROFILE: "default"
+        SERVER_PORT: "8080"
+        CONFIGSERVER_URI: "http://configserver:8888"
+        EUREKASERVER_URI: "http://eurekaserver:8761/eureka/"
+        CONFIGSERVER_PORT:   "8888"
+        DATABASESERVER_PORT: "5432"
+        EUREKASERVER_PORT:   "8761"
+  productservice1:
+      image: cham/exe-product-service:webshop
+      ports:
+        - "8085:8085"
+      environment:
+        PROFILE: "default"
+        SERVER_PORT: "8085"
+        CONFIGSERVER_URI: "http://configserver:8888"
+        EUREKASERVER_URI: "http://eurekaserver:8761/eureka/"
+        CONFIGSERVER_PORT:   "8888"
+        DATABASESERVER_PORT: "5432"
+        EUREKASERVER_PORT:   "8761"
+  productservice2:
+      image: cham/exe-product-service:webshop
+      ports:
+        - "8086:8086"
+      environment:
+              PROFILE: "default"
+              SERVER_PORT: "8086"
+              CONFIGSERVER_URI: "http://configserver:8888"
+              EUREKASERVER_URI: "http://eurekaserver:8761/eureka/"
+              CONFIGSERVER_PORT:   "8888"
+              DATABASESERVER_PORT: "5432"
+              EUREKASERVER_PORT:   "8761"
